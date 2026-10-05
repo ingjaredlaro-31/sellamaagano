@@ -432,6 +432,16 @@ body.pt-on main{max-width:none;padding:0;gap:0}
   .pt-abajo{grid-template-columns:1fr}
 }
 
+.voces{display:grid;gap:6px;max-height:340px;overflow:auto;padding:2px}
+.voz-it{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:12px;padding:4px 6px 4px 4px;background:var(--surface)}
+.voz-it.on{border-color:var(--gold);box-shadow:0 0 0 2px color-mix(in srgb,var(--gold-2) 35%,transparent)}
+.voz-sel{appearance:none;border:0;background:none;color:inherit;display:flex;align-items:center;gap:10px;flex:1;min-width:0;text-align:left;padding:8px;cursor:pointer;border-radius:9px}
+.voz-tx b{overflow-wrap:anywhere}
+.voz-sel:hover{background:var(--surface-2)}
+.voz-r{width:18px;height:18px;border-radius:50%;border:2px solid var(--line-2);flex:none}
+.voz-it.on .voz-r{border-color:var(--gold);background:radial-gradient(circle,var(--gold) 45%,transparent 50%)}
+.voz-tx{display:flex;flex-direction:column;min-width:0;flex:1}
+.voz-tx small{color:var(--muted)}
 .lienzo{width:100%;height:auto;aspect-ratio:1080/1350;border-radius:12px;display:block;margin-top:12px;background:#0d1014;box-shadow:var(--shadow)}
 .red-url{display:flex;gap:16px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;margin-top:10px;flex-wrap:wrap}
 .red-url img{width:150px;height:150px;image-rendering:pixelated;background:#fff;border-radius:8px;padding:4px}
@@ -14203,11 +14213,14 @@ function vAjustes(){
 
   <div class="card"><div class="sec-h"><span class="sec-ic">${ICON.voz}</span><h3>Anuncio por voz</h3></div>
     ${hayVoz() ? `<p class="small muted" style="margin:0 0 12px">Se activa en cada equipo (por ejemplo, en la laptop conectada a la bocina). Anuncia la pelea en turno, las que se preparan y al ganador.</p>
-    <div class="fields">
-      <label class="f"><span>Voz</span><select id="voz-sel" data-act-change="voz-sel"><option value="">Automática (español)</option>${vocesEs().map(v=>`<option value="${esc(v.name)}" ${VOZ.voz===v.name?'selected':''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')}</select></label>
-      <label class="f"><span>Velocidad</span><select id="voz-vel" data-act-change="voz-vel">${[[0.8,'Lenta'],[1,'Normal'],[1.15,'Rápida']].map(([v,t])=>`<option value="${v}" ${+VOZ.vel===v?'selected':''}>${t}</option>`).join('')}</select></label>
+    <div class="voces" id="voces">${listaVoces()}</div>
+    <div class="fields" style="margin-top:14px">
+      <label class="f"><span>Velocidad</span><select id="voz-vel" data-act-change="voz-vel">${[[0.85,'Pausada'],[1,'Normal'],[1.12,'Rápida']].map(([v,t])=>`<option value="${v}" ${+VOZ.vel===v?'selected':''}>${t}</option>`).join('')}</select></label>
+      <label class="f"><span>Tono</span><select id="voz-tono" data-act-change="voz-tono">${[[0.85,'Grave (locutor)'],[1,'Normal'],[1.12,'Agudo']].map(([v,t])=>`<option value="${v}" ${+VOZ.tono===v?'selected':''}>${t}</option>`).join('')}</select></label>
     </div>
-    <div class="row" style="margin-top:12px">${btnVoz('btn')}<button class="btn" data-act="voz-probar">${ICON.voz} Probar</button></div>` : '<p class="muted" style="margin:0">Este navegador no tiene voz. Usa Chrome o Edge en la laptop.</p>'}</div>
+    <label class="chk" style="margin-top:12px"><input type="checkbox" id="voz-camp" data-act-change="voz-camp" ${VOZ.campana?'checked':''}> Tocar campana antes de cada anuncio</label>
+    <div class="row" style="margin-top:12px">${btnVoz('btn')}<button class="btn pri" data-act="voz-probar">${ICON.voz} Escuchar anuncio de prueba</button></div>
+    <p class="small muted" style="margin:10px 0 0">Las voces marcadas <b>Natural</b> suenan como persona. Las mejores salen en <b>Microsoft Edge</b> (Jorge y Dalia de México) y en <b>Chrome</b> (Google español). Algunas necesitan internet; sin señal la app cambia sola a una voz del equipo.</p>` : '<p class="muted" style="margin:0">Este navegador no tiene voz. Usa Chrome o Edge en la laptop.</p>'}</div>
 
   ${vRedLocal()}
 
@@ -14832,17 +14845,66 @@ function listoQR(){
 }
 
 /* ============================== anuncio por voz ============================== */
-const VOZ = Object.assign({on:false, vel:1, voz:''}, (()=>{ try{ return JSON.parse(localStorage.getItem('sellamaagano-voz')||'{}'); }catch{ return {}; } })(), {turno:null, visto:0});
-function vozGuardar(){ try{ localStorage.setItem('sellamaagano-voz', JSON.stringify({on:VOZ.on, vel:VOZ.vel, voz:VOZ.voz})); }catch{} }
+const VOZ = Object.assign({on:false, vel:1, voz:'', tono:1, campana:true}, (()=>{ try{ return JSON.parse(localStorage.getItem('sellamaagano-voz')||'{}'); }catch{ return {}; } })(), {turno:null, visto:0});
+function vozGuardar(){ try{ localStorage.setItem('sellamaagano-voz', JSON.stringify({on:VOZ.on, vel:VOZ.vel, voz:VOZ.voz, tono:VOZ.tono, campana:VOZ.campana})); }catch{} }
 const hayVoz = () => 'speechSynthesis' in window && typeof SpeechSynthesisUtterance!=='undefined';
-function vocesEs(){ try{ return speechSynthesis.getVoices().filter(v=>/^es/i.test(v.lang)); }catch{ return []; } }
-function decir(txt){
+const HOMBRES = /jorge|raul|raúl|pablo|alvaro|álvaro|gonzalo|diego|alonso|carlos|juan|jose|josé|enrique|miguel|antonio|gerardo|liberto|ivan|iván|tomas|tomás|andres|andrés|jacobo/i;
+const MUJERES = /dalia|sabina|paloma|helena|laura|elvira|monica|mónica|paulina|elena|marisol|lupe|renata|beatriz|candela|larissa|nuria|irene|ximena|camila|valentina|esperanza|abril|lia|elsa/i;
+function rankVoz(v){
+  let r = 0; const n = v.name || '', l = (v.lang||'').toLowerCase();
+  if(/natural|neural|premium|enhanced|mejorad/i.test(n)) r += 100;
+  if(/online/i.test(n)) r += 30;
+  if(/google/i.test(n)) r += 45;
+  if(/mx/.test(l)) r += 25; else if(/us|419/.test(l)) r += 18; else if(/es-es|es_es/.test(l)) r += 6;
+  if(/compact|eloquence|novelty|espeak/i.test(n)) r -= 60;
+  return r;
+}
+function vocesEs(){ try{ return speechSynthesis.getVoices().filter(v=>/^es/i.test(v.lang)).sort((a,b)=>rankVoz(b)-rankVoz(a)); }catch{ return []; } }
+function vozNombre(v){
+  let n = (v.name||'').replace(/^Microsoft\s+/i,'').replace(/\s*Online\s*/i,' ').replace(/\s*\(Natural\)\s*/i,' ').replace(/\s*-\s*Spanish.*$/i,'').replace(/\s+/g,' ').trim();
+  const pais = /mx/i.test(v.lang) ? 'México' : /us/i.test(v.lang) ? 'Estados Unidos' : /419/.test(v.lang) ? 'Latinoamérica' : /es-es|es_es/i.test(v.lang) ? 'España' : (v.lang||'');
+  return {n, pais, genero: HOMBRES.test(v.name) ? 'Hombre' : MUJERES.test(v.name) ? 'Mujer' : '', natural: rankVoz(v) >= 100 || /google/i.test(v.name), linea: v.localService===false};
+}
+function vozElegida(){
+  const vs = vocesEs(); if(!vs.length) return null;
+  let v = vs.find(x=>x.name===VOZ.voz) || vs[0];
+  if(v && v.localService===false && !navigator.onLine) v = vs.find(x=>x.localService!==false) || v; // sin señal: una voz que funcione sin internet
+  return v;
+}
+let audioCx = null;
+function campana(){
+  return new Promise(res=>{
+    try{
+      audioCx = audioCx || new (window.AudioContext||window.webkitAudioContext)();
+      const t0 = audioCx.currentTime + .02;
+      [[987.8,0],[783.99,.32]].forEach(([f,dt])=>{
+        [1,2.76,5.4].forEach((m,i)=>{
+          const o = audioCx.createOscillator(), g = audioCx.createGain();
+          o.type = 'sine'; o.frequency.value = f*m;
+          const vol = [.32,.12,.05][i];
+          g.gain.setValueAtTime(0, t0+dt); g.gain.linearRampToValueAtTime(vol, t0+dt+.01); g.gain.exponentialRampToValueAtTime(.0001, t0+dt+1.5);
+          o.connect(g).connect(audioCx.destination); o.start(t0+dt); o.stop(t0+dt+1.6);
+        });
+      });
+      setTimeout(res, 950);
+    }catch{ res(); }
+  });
+}
+function hablar(txt, voz, reintento){
+  const u = new SpeechSynthesisUtterance(txt);
+  try{ if(voz){ u.voice = voz; u.lang = voz.lang; } else u.lang = 'es-MX'; }catch{ u.lang = (voz && voz.lang) || 'es-MX'; }
+  u.rate = VOZ.vel || 1; u.pitch = VOZ.tono || 1;
+  u.onerror = () => { if(!reintento){ const loc = vocesEs().find(x=>x.localService!==false); if(loc && loc!==voz) hablar(txt, loc, true); } };
+  speechSynthesis.speak(u);
+}
+async function decir(txt, conCampana){
   if(!hayVoz() || !txt) return;
   try{
-    const u = new SpeechSynthesisUtterance(txt), vs = vocesEs();
-    const v = vs.find(x=>x.name===VOZ.voz) || vs.find(x=>/MX/i.test(x.lang)) || vs.find(x=>/US|419/i.test(x.lang)) || vs[0];
-    if(v){ u.voice = v; u.lang = v.lang; } else u.lang = 'es-MX';
-    u.rate = VOZ.vel || 1; speechSynthesis.speak(u);
+    if(conCampana && VOZ.campana) await campana();
+    // pausas naturales de locutor
+    const frases = txt.split(/(?<=[.:])\s+/).filter(Boolean);
+    const v = vozElegida();
+    frases.forEach(f=>hablar(f, v));
   }catch{}
 }
 function pesoHablado(g){
@@ -14873,12 +14935,22 @@ function vozRevisar(){
   if(!pt && !(esAdmin() && S.vista==='peleas')) return;
   const d = pt ? derbyPantalla() : cur(); if(!d || !d.peleas.length) return;
   const ult = d.peleas.filter(x=>x.res && x.resEn).sort((x,y)=>y.resEn-x.resEn)[0];
-  if(ult && ult.resEn > VOZ.visto){ VOZ.visto = ult.resEn; if(Date.now()-ult.resEn < 60000) decir(textoResultado(d, ult)); }
+  if(ult && ult.resEn > VOZ.visto){ VOZ.visto = ult.resEn; if(Date.now()-ult.resEn < 60000) decir(textoResultado(d, ult), true); }
   const t = turnoDe(d);
-  if(t && t.id!==VOZ.turno){ VOZ.turno = t.id; decir(textoPelea(d, t)); }
+  if(t && t.id!==VOZ.turno){ VOZ.turno = t.id; setTimeout(()=>decir(textoPelea(d, t), true), 300); }
   else if(!t && VOZ.turno!=='fin'){ VOZ.turno = 'fin'; const c = calcularTabla(d).filter(f=>f.lugar===1&&f.pts>0); if(c.length) decir(`Termina el derby. ${c.length>1?'Empatan en primer lugar':'Campeón'}: ${c.map(f=>f.p.nombre).join(' y ')}.`); }
 }
 function btnVoz(cls){ return hayVoz() ? `<button class="${cls}" data-act="voz-toggle" title="Anunciar las peleas en voz alta">${VOZ.on?ICON.voz:ICON.mudo} Voz: ${VOZ.on?'Sí':'No'}</button>` : ''; }
+
+function listaVoces(){
+  const vs = vocesEs();
+  if(!vs.length) return '<p class="muted small" style="margin:0">Cargando voces del equipo…</p>';
+  const actual = vozElegida();
+  return vs.slice(0,14).map(v=>{ const x = vozNombre(v); const on = actual && actual.name===v.name;
+    return `<div class="voz-it ${on?'on':''}"><button class="voz-sel" data-act="voz-elegir" data-n="${esc(v.name)}" aria-pressed="${on}"><span class="voz-r"></span><span class="voz-tx"><b>${esc(x.n)}</b><small>${esc(x.pais)}${x.genero?' · '+x.genero:''}${x.linea?' · con internet':''}</small></span>${x.natural?'<span class="chip acc">Natural</span>':''}</button>
+      <button class="icon-btn" title="Escuchar" aria-label="Escuchar ${esc(x.n)}" data-act="voz-oir" data-n="${esc(v.name)}">${ICON.voz}</button></div>`; }).join('');
+}
+if(hayVoz()){ try{ speechSynthesis.addEventListener('voiceschanged', ()=>{ const el = $('#voces'); if(el) el.innerHTML = listaVoces(); }); }catch{} }
 
 /* ============================== lector de anillos (QR) ============================== */
 const qrTexto = (d, g) => `SLAG|${g.id}|${g.anillo||''}`;
@@ -15434,8 +15506,10 @@ document.addEventListener('click', async e=>{
     case 'mas': modal(`<h3>Más opciones</h3><div class="mas-grid">${VISTAS.filter(([k])=>!['partidos','cotejo','peleas','tabla'].includes(k)).map(([k,tt])=>`<button class="mas-it" data-act="vista" data-v="${k}">${ICON[k]}<span>${tt}</span></button>`).join('')}
         <button class="mas-it" data-act="qr-abrir">${ICON.qr}<span>Buscar gallo</span></button><button class="mas-it" data-act="pantalla-on">${ICON.tv}<span>Pantalla</span></button></div><div class="row" style="justify-content:flex-end"><button class="btn" data-act="cerrar">Cerrar</button></div>`); break;
     case 'voz-toggle': VOZ.on = !VOZ.on; vozGuardar(); if(VOZ.on){ VOZ.turno = null; VOZ.visto = Date.now(); decir('Anuncio por voz activado.'); } else { try{ speechSynthesis.cancel(); }catch{} } render(); break;
-    case 'voz-probar': decir(`Bienvenidos a ${S.ajustes.palenque||S.ajustes.app}. Pelea número uno. Por el lado ${S.ajustes.ladoA}: Rancho El Mezquite. Por el lado ${S.ajustes.ladoB}: El Gavilán.`); break;
-    case 'voz-repetir': { const dd = cur(); const tt = dd && turnoDe(dd); if(tt) decir(textoPelea(dd, tt)); break; }
+    case 'voz-elegir': VOZ.voz = t.dataset.n; vozGuardar(); { const el = $('#voces'); if(el) el.innerHTML = listaVoces(); } { const v = vocesEs().find(x=>x.name===VOZ.voz); try{ speechSynthesis.cancel(); }catch{} if(v) hablar('Pelea número uno. Por el lado rojo, Rancho El Mezquite.', v); } break;
+    case 'voz-oir': { const v = vocesEs().find(x=>x.name===t.dataset.n); try{ speechSynthesis.cancel(); }catch{} if(v) hablar('Pelea número uno. Por el lado rojo, Rancho El Mezquite.', v); break; }
+    case 'voz-probar': try{ speechSynthesis.cancel(); }catch{} decir(`Bienvenidos a ${S.ajustes.palenque||S.ajustes.app}. Pelea número uno. Por el lado ${S.ajustes.ladoA}: Rancho El Mezquite. Por el lado ${S.ajustes.ladoB}: El Gavilán. Se prepara la pelea número dos.`, true); break;
+    case 'voz-repetir': { const dd = cur(); const tt = dd && turnoDe(dd); if(tt) decir(textoPelea(dd, tt), true); break; }
     case 'qr-abrir': if(!$('#modal-root .mas-grid')) {} abrirLector(); listoQR().catch(()=>{}); break;
     case 'qr-vivo': camaraVivo().catch(()=>toast('No se pudo abrir la cámara.')); break;
     case 'qr-buscar': { const q = ($('#qr-anillo').value||'').trim().toLowerCase(); const res = $('#qr-res'); if(!q){ res.innerHTML=''; break; }
@@ -15519,7 +15593,9 @@ document.addEventListener('change', async e=>{
   if(ac==='tiempo' && d){ const p = d.peleas.find(x=>x.id===t.dataset.pelea); const v = pTiempo(t.value); if(v!==null && isNaN(v)){ toast('Escribe el tiempo como min:seg, por ejemplo 3:25'); render(); return; } p.tiempo = v; guardarDerby(d); }
   if(ac==='filtro-ronda'){ S.ronda = t.value==='todas' ? 'todas' : +t.value; render(); }
   if(ac==='voz-sel'){ VOZ.voz = t.value; vozGuardar(); decir('Así sonará el anuncio.'); return; }
-  if(ac==='voz-vel'){ VOZ.vel = +t.value; vozGuardar(); decir('Así sonará el anuncio.'); return; }
+  if(ac==='voz-vel'){ VOZ.vel = +t.value; vozGuardar(); try{ speechSynthesis.cancel(); }catch{} decir('Así sonará el anuncio.'); return; }
+  if(ac==='voz-tono'){ VOZ.tono = +t.value; vozGuardar(); try{ speechSynthesis.cancel(); }catch{} decir('Así sonará el anuncio.'); return; }
+  if(ac==='voz-camp'){ VOZ.campana = t.checked; vozGuardar(); if(VOZ.campana) campana(); return; }
   if(ac==='qr-foto'){ const f = t.files[0]; if(!f) return; const res = $('#qr-res'); if(res) res.innerHTML = '<p class="muted">Leyendo…</p>';
     try{ const txt = await leerQRImagen(f); if(txt) mostrarHallazgo(txt); else if(res) res.innerHTML = '<p class="err">No encontré un código QR en la foto. Acércate más, con buena luz y sin reflejos.</p>'; }
     catch{ if(res) res.innerHTML = `<p class="err">${navigator.onLine?'No se pudo leer la foto.':'El lector necesita señal la primera vez en la app en línea. En la versión sin internet funciona siempre.'}</p>`; }

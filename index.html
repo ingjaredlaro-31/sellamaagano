@@ -13281,7 +13281,7 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
 
 /***/ })
 /******/ ])["default"];
-});</script><script>window.__OFFLINE__=true;window.__PWA__=true;</script><script>if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost" || location.hostname==="127.0.0.1")){addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script><script id="app-js">
+});</script><script>window.__NUBE__=true;window.__PWA__=true;</script><script>if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost" || location.hostname==="127.0.0.1")){addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script><script id="app-js">
 /* ============================== utilidades ============================== */
 const FUENTE = {
   css: document.getElementById('app-css').outerHTML + document.getElementById('app-fotos').outerHTML,
@@ -13367,12 +13367,12 @@ const S = {
 };
 const VISTAS = [['derbis','Derbis'],['partidos','Partidos'],['cotejo','Cotejo'],['peleas','Peleas'],['tabla','Tabla'],['caja','Caja'],['historial','Historial'],['redes','Redes'],['ajustes','Ajustes']];
 // ¿Esta copia puede usar la nube? (la versión descargada para usar sin internet nunca)
-const PUEDE_NUBE = !!window.__RED__ || (!window.__OFFLINE__ && !!(window.claude && typeof window.claude.use==='function'));
+const PUEDE_NUBE = !!window.__RED__ || !!window.__NUBE__ || (!window.__OFFLINE__ && !!(window.claude && typeof window.claude.use==='function'));
 
 /* ============================== persistencia ==============================
    Siempre se guarda una copia en el dispositivo. Si hay nube, cada cambio entra a una
    cola de pendientes (también guardada en el dispositivo) que se sube cuando hay señal. */
-const LS = window.__RED__ ? 'sellamaagano-red-v1' : window.__OFFLINE__ ? 'sellamaagano-offline-v1' : 'cotejador-derbis-v1';
+const LS = window.__RED__ ? 'sellamaagano-red-v1' : (window.__OFFLINE__ || window.__NUBE__) ? 'sellamaagano-offline-v1' : 'cotejador-derbis-v1';
 function lsGet(k){ try{ return JSON.parse(localStorage.getItem(k) || 'null'); }catch{ return null; } }
 function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch{ return false; } }
 const pend = new Map(), writing = new Set(), timers = {}, intentos = {};
@@ -13384,8 +13384,11 @@ function guardarLocal(){ guardarCopia(); lsSet(LS+'-ui', {actual:S.actual, vista
 
 function setSync(t){ if(t!=null) S.sync=t; const el=$('#sync'); if(!el) return;
   let txt, cls='';
-  if(window.__PWA__) txt = 'Guardado en este equipo';
+  if(window.__PWA__ && !window.__NUBE__) txt = 'Guardado en este equipo';
   else if(window.__OFFLINE__) txt = 'Versión sin internet · guardado aquí';
+  else if(EN_NUBE && S.sync==='sinnube') txt = 'Guardado en este equipo';
+  else if(S.sync==='permiso' && pend.size){ txt = `${pend.size} cambio${pend.size>1?'s':''} por subir · entra como admin`; cls='off'; }
+  else if(EN_NUBE && S.sync==='conectando') txt = 'Conectando con la nube…';
   else if(EN_RED) { if(S.sync==='offline'){ txt = 'Sin conexión con el servidor'; cls='off'; } else txt = pend.size||writing.size ? 'Guardando…' : 'Wi-Fi del palenque'; }
   else if(!S.db) txt = PUEDE_NUBE && S.sync==='conectando' ? 'Conectando…' : 'Guardado en este dispositivo';
   else if(!navigator.onLine || S.sync==='offline'){ txt = pend.size ? `Sin señal · ${pend.size} cambio${pend.size>1?'s':''} por subir` : 'Sin señal · guardado aquí'; cls='off'; }
@@ -13418,7 +13421,7 @@ async function flush(path){
     if(pend.has(path)){ clearTimeout(timers[path]); timers[path]=setTimeout(()=>flush(path),200); }
   }catch(e){
     const code = e && e.code;
-    if(code==='permiso'){ pend.delete(path); guardarCopia(); S.sync='error'; toast('Solo el administrador puede guardar cambios. Entra con tu usuario y contraseña.'); }
+    if(code==='permiso'){ S.sync='permiso'; if(esAdmin()) toast('La nube no aceptó tu contraseña. Sal y vuelve a entrar como administrador.'); } // se queda en la cola hasta que entre el administrador
     else if(code==='invalid_argument' || code==='quota_exceeded' || code==='transform_error'){
       // no se puede subir; se queda guardado en el dispositivo
       pend.delete(path); guardarCopia(); S.sync='error';
@@ -13492,7 +13495,7 @@ async function init(){
   if(!PUEDE_NUBE) return;
   // 2) conectar con la nube sin bloquear
   let db = null;
-  if(EN_RED){ db = redDB(); S.db = db; S.modo = 'red'; S.sync = 'ok'; S.puedeEscribir = true; S.redClave = lsGet(LS+'-clave'); setSync(); escuchar(ui); subirTodo(); render(); return; }
+  if(EN_API){ db = EN_RED ? redDB() : nubeDB(); S.db = db; S.modo = EN_RED ? 'red' : 'nube'; S.sync = EN_RED ? 'ok' : 'conectando'; S.puedeEscribir = true; S.redClave = lsGet(LS+'-clave'); setSync(); escuchar(ui); subirTodo(); render(); return; }
   try{ db = await Promise.race([window.claude.use('db'), new Promise(r=>setTimeout(()=>r(null), 10000))]); }catch{ db = null; }
   if(!db){ S.sync=''; S.puedeEscribir = true; S.ajListos = true; setSync(); render(); return; }
   S.db = db; S.modo='nube'; S.sync = navigator.onLine ? 'ok' : 'offline'; setSync();
@@ -13523,10 +13526,12 @@ function escuchar(ui){
     if(!snap.metadata || !snap.metadata.fromCache){
       for(const id of Object.keys(S.derbis)){
         if(!vistos.has(id) && !pend.has('derbis/'+id) && !writing.has('derbis/'+id)){
+          if(EN_NUBE && primero && !lsGet(LS+'-sync1')){ queueWrite('derbis/'+id, S.derbis[id]); continue; } // datos que solo estaban en este equipo: se suben
           delete S.derbis[id]; cambio = true; // lo borraron en otro dispositivo
         }
       }
     }
+    if(primero && EN_NUBE) lsSet(LS+'-sync1', 1);
     if(cambio || primero){ guardarCopia(); if(S.actual && !S.derbis[S.actual]) elegirActual(); if(!S.actual) elegirActual(ui && ui.actual); renderRemoto(); }
     primero = false;
   }, ()=>{ S.sync='offline'; setSync(); setTimeout(()=>escuchar(), 8000); });
@@ -13538,6 +13543,8 @@ function escuchar(ui){
   }, ()=>{});
   db.doc('ajustes/general').onSnapshot(snap=>{
     if(!S.ajListos){ S.ajListos = true; renderRemoto(); }
+    if(!snap.exists && EN_NUBE && !lsGet(LS+'-sync1a') && S.ajustes.adminHash){ queueWrite('ajustes/general', S.ajustes); }
+    if(EN_NUBE) lsSet(LS+'-sync1a', 1);
     if(pend.has('ajustes/general') || writing.has('ajustes/general') || !snap.exists) return;
     const nuevo = {...AJ_DEF, ...snap.data()};
     if(JSON.stringify(nuevo) !== JSON.stringify(S.ajustes)){ S.ajustes = nuevo; guardarCopia(); aplicarAjustes(); renderRemoto(); }
@@ -14221,7 +14228,9 @@ function vAjustes(){
     <p class="small muted" style="margin:10px 0 0">Los pesos se guardan siempre con precisión; cambiar la unidad solo cambia cómo se ven y se capturan.</p></div>
 
   <div class="card"><div class="sec-h"><span class="sec-ic">${ICON.dl}</span><h3>Respaldo y sin internet</h3></div>
-    <p class="small muted" style="margin:0 0 10px">${window.__OFFLINE__ ? 'Esta es la versión sin internet: todo se guarda en este equipo. Para pasar los datos a la app en línea, haz un respaldo aquí y restáuralo allá (o al revés).' : S.db ? 'Tus derbis se guardan en este dispositivo y en la nube. Si se va la señal, la app sigue funcionando y sube los cambios cuando regresa.' : 'Tus derbis se guardan en este dispositivo. Haz respaldos seguido.'}</p>
+    ${EN_NUBE && S.sync!=='sinnube' ? `<p class="small" style="margin:0 0 10px"><b style="color:var(--ok)">Tus datos están protegidos.</b> Se guardan en este equipo y en tu nube. Si se va la señal, la app sigue funcionando y sube los cambios en cuanto regresa. Además, la nube guarda un respaldo cada hora.</p>
+      <div class="row" style="margin-bottom:12px"><button class="btn" data-act="nube-respaldos">${ICON.historial} Respaldos de la nube</button></div>` : ''}
+    <p class="small muted" style="margin:0 0 10px">${EN_NUBE ? 'También puedes guardar un archivo de respaldo en tu equipo:' : window.__OFFLINE__ ? 'Esta es la versión sin internet: todo se guarda en este equipo. Para pasar los datos a la app en línea, haz un respaldo aquí y restáuralo allá (o al revés).' : S.db ? 'Tus derbis se guardan en este dispositivo y en la nube. Si se va la señal, la app sigue funcionando y sube los cambios cuando regresa.' : 'Tus derbis se guardan en este dispositivo. Haz respaldos seguido.'}</p>
     <div class="row"><button class="btn pri" data-act="app-offline">${ICON.dl} Descargar versión sin internet</button><button class="btn" data-act="exp-todo">${ICON.dl} Respaldar todo</button>
     <label class="btn" for="imp-json">${ICON.up} Restaurar respaldo</label><input type="file" id="imp-json" accept=".json,application/json" hidden data-act-change="imp-json"></div></div>
   </div>`;
@@ -14303,7 +14312,7 @@ async function appSinInternet(modo){
   const head = '<meta name="theme-color" content="#14171c"><link rel="icon" type="image/png" href="' + LOGO_PDF + '">'
     + (instalable ? '<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="' + app + '"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">' : '');
   const sw = instalable ? '<script>if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost" || location.hostname==="127.0.0.1")){addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}<\/script>' : '';
-  const flags = modo==='red' ? 'window.__RED__=true;' : modo==='pwa' ? 'window.__OFFLINE__=true;window.__PWA__=true;' : 'window.__OFFLINE__=true;window.__DATOS__=' + datos + ';';
+  const flags = modo==='red' ? 'window.__RED__=true;' : modo==='pwa' ? 'window.__NUBE__=true;window.__PWA__=true;' : 'window.__OFFLINE__=true;window.__DATOS__=' + datos + ';';
   return '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
     + '<title>' + app + (modo ? '' : ' · sin internet') + '</title>' + head
     + '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap">'
@@ -14332,7 +14341,7 @@ function rolPartido(){
   const d = S.derbis[S.rol.derby]; const p = d && d.partidos.find(x=>x.id===S.rol.pid);
   return p ? {d, p} : null;
 }
-function setRol(r){ S.rol = r; if(r) lsSet(LS+'-rol', r); else { try{ localStorage.removeItem(LS+'-rol'); }catch{} } window.scrollTo(0,0); render(); }
+function setRol(r){ if(r && r.tipo==='admin' && S.sync==='permiso'){ S.sync='ok'; setTimeout(subirTodo, 300); } S.rol = r; if(r) lsSet(LS+'-rol', r); else { try{ localStorage.removeItem(LS+'-rol'); }catch{} } window.scrollTo(0,0); render(); }
 async function hashClave(t){
   const txt = 'sellamaagano:' + t;
   try{ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(txt)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
@@ -14366,7 +14375,7 @@ function vPortada(){
   else adm = `<label class="f"><span>Usuario</span><input type="text" id="ad-u" autocomplete="username" autocapitalize="none"></label>
       <label class="f"><span>Contraseña</span><input type="password" id="ad-p" autocomplete="current-password" data-enter="login-admin"></label>
       <p class="err" id="ad-err" role="alert"></p><button class="btn pri lg" data-act="login-admin">Entrar como administrador</button>
-      ${(S.puedeEscribir===true && (window.__OFFLINE__ || S.db || !PUEDE_NUBE)) ? '<button class="btn ghost sm" data-act="olvide">Olvidé mi contraseña</button>' : ''}`;
+      ${(S.puedeEscribir===true && !EN_API && (window.__OFFLINE__ || S.db || !PUEDE_NUBE)) ? '<button class="btn ghost sm" data-act="olvide">Olvidé mi contraseña</button>' : ''}`;
   const par = derbis.length ? `
       <label class="f"><span>Derby</span><select id="pa-d">${derbis.map(x=>`<option value="${x.id}">${esc(x.nombre)} · ${esc(fFecha(x.fecha))}</option>`).join('')}</select></label>
       <label class="f"><span>Código de acceso</span><input type="text" inputmode="numeric" autocomplete="off" maxlength="6" id="pa-c" class="codigo" placeholder="0000" data-enter="login-partido"></label>
@@ -15195,6 +15204,47 @@ function vRedes(d){
 
 /* ============================== red local del palenque ============================== */
 const EN_RED = !!window.__RED__;
+const EN_NUBE = !!window.__NUBE__;
+const EN_API = EN_RED || EN_NUBE;
+function nubeDB(){
+  const docs = {}; const subs = []; let listo = false, rev = 0, timer = null, sinFuncion = false;
+  const emitir = () => subs.forEach(f=>f());
+  const cada = () => document.hidden ? 30000 : (esAdmin() || enPantalla() ? 4000 : 7000);
+  async function sondear(){
+    clearTimeout(timer);
+    try{
+      const r = await fetch('/api/todo?rev=' + (listo ? rev : 0), {cache:'no-store'});
+      if(r.status===404){ sinFuncion = true; S.sync = 'sinnube'; setSync(); return; }
+      if(!r.ok) throw 0;
+      const j = await r.json();
+      if(S.sync==='offline' || S.sync==='conectando'){ S.sync = 'ok'; setSync(); subirTodo(); }
+      let cambio = !listo;
+      if(j.completo || !listo){ Object.keys(docs).forEach(k=>delete docs[k]); Object.assign(docs, j.docs||{}); cambio = true; }
+      else { for(const [k,v] of Object.entries(j.docs||{})){ docs[k] = v; cambio = true; } for(const k of (j.borrados||[])){ if(k in docs){ delete docs[k]; cambio = true; } } }
+      rev = j.rev || 0; listo = true;
+      if(cambio) emitir();
+    }catch{ if(S.sync!=='offline'){ S.sync = 'offline'; setSync(); } }
+    timer = setTimeout(sondear, cada());
+  }
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && !sinFuncion) sondear(); });
+  window.addEventListener('online', ()=>{ if(!sinFuncion) sondear(); });
+  sondear();
+  const auth = () => { const c = S.redClave || lsGet(LS+'-clave'); return c ? {'X-Clave': btoa(unescape(encodeURIComponent(c)))} : {}; };
+  async function enviar(method, path, body){
+    if(sinFuncion) throw {code:'unavailable'};
+    let r; try{ r = await fetch('/api/doc?path='+encodeURIComponent(path), {method, headers:{'Content-Type':'application/json', ...auth()}, body: body ? JSON.stringify(body) : undefined}); }
+    catch{ throw {code:'unavailable'}; }
+    if(r.status===403) throw {code:'permiso', message:'Sin permiso'};
+    if(r.status===413) throw {code:'invalid_argument'};
+    if(!r.ok) throw {code:'unavailable'};
+    setTimeout(sondear, 300);
+  }
+  return {
+    doc: path => ({ set: d => enviar('PUT', path, d), delete: () => enviar('DELETE', path),
+      onSnapshot(next){ const f = () => { if(!listo) return; const d = docs[path]; next({exists:!!d, data:()=>d, metadata:{fromCache:false}}); }; subs.push(f); return ()=>{}; } }),
+    collection: c => ({ onSnapshot(next){ const f = () => { if(!listo) return; next({docs: Object.keys(docs).filter(k=>k.startsWith(c+'/') && k.split('/').length===2).map(k=>({id:k.split('/')[1], data:()=>docs[k]})), metadata:{fromCache:false}}); }; subs.push(f); return ()=>{}; } })
+  };
+}
 function redDB(){
   const docs = {}; const subs = []; let listo = false;
   const emitir = () => subs.forEach(f=>f());
@@ -15321,15 +15371,15 @@ document.addEventListener('click', async e=>{
       try{ await navigator.clipboard.writeText(txt); toast('Mensaje copiado. Pégalo en WhatsApp.'); }
       catch{ modal(`<h3>Mensaje para ${esc(pp.nombre)}</h3><textarea id="copy-area" readonly style="font-family:var(--f-body)">${esc(txt)}</textarea><div class="row" style="justify-content:flex-end"><button class="btn" data-act="cerrar">Cerrar</button><button class="btn pri" data-act="copiar">${ICON.copy} Copiar</button></div>`); }
       break; }
-    case 'salir': S.modoPantalla = false; if(EN_RED){ S.redClave = null; try{ localStorage.removeItem(LS+'-clave'); }catch{} } setRol(null); break;
+    case 'salir': S.modoPantalla = false; if(EN_API){ S.redClave = null; try{ localStorage.removeItem(LS+'-clave'); }catch{} } setRol(null); break;
     case 'crear-admin': {
       const u = $('#ad-u').value.trim().toLowerCase(), p1 = $('#ad-p').value, p2 = $('#ad-p2').value, er = $('#ad-err');
       if(!u){ er.textContent = 'Escribe un usuario.'; break; } if(p1.length<4){ er.textContent = 'La contraseña debe tener al menos 4 caracteres.'; break; } if(p1!==p2){ er.textContent = 'Las contraseñas no coinciden.'; break; }
-      if(EN_RED){ S.redClave = u+'|'+p1; lsSet(LS+'-clave', S.redClave); }
+      if(EN_API){ S.redClave = u+'|'+p1; lsSet(LS+'-clave', S.redClave); }
       S.ajustes.adminUsuario = u; S.ajustes.adminHash = await hashClave(u+'|'+p1); guardarAjustes(); setRol({tipo:'admin'}); toast('Acceso creado. Bienvenido.'); break; }
     case 'login-admin': {
       const u = $('#ad-u').value.trim().toLowerCase(), p1 = $('#ad-p').value;
-      if(u===(S.ajustes.adminUsuario||'').toLowerCase() && await hashClave(u+'|'+p1)===S.ajustes.adminHash){ if(EN_RED){ S.redClave = u+'|'+p1; lsSet(LS+'-clave', S.redClave); } setRol({tipo:'admin'}); toast('Bienvenido'); }
+      if(u===(S.ajustes.adminUsuario||'').toLowerCase() && await hashClave(u+'|'+p1)===S.ajustes.adminHash){ if(EN_API){ S.redClave = u+'|'+p1; lsSet(LS+'-clave', S.redClave); } setRol({tipo:'admin'}); toast('Bienvenido'); }
       else { $('#ad-err').textContent = 'Usuario o contraseña incorrectos.'; $('#ad-p').value=''; }
       break; }
     case 'olvide': confirmar('Restablecer acceso', 'Se borrará el usuario y la contraseña de administrador para crear unos nuevos. Tus derbis no se tocan.', 'Restablecer', ()=>{ S.ajustes.adminHash=''; S.ajustes.adminUsuario=''; guardarAjustes(); toast('Crea tu nuevo acceso'); }, true); break;
@@ -15343,7 +15393,7 @@ document.addEventListener('click', async e=>{
       if(!u){ er.textContent = 'Escribe un usuario.'; break; } if(p1.length<4){ er.textContent = 'La contraseña debe tener al menos 4 caracteres.'; break; } if(p1!==p2){ er.textContent = 'Las contraseñas no coinciden.'; break; }
       const viejaClave = S.redClave;
       S.ajustes.adminUsuario = u; S.ajustes.adminHash = await hashClave(u+'|'+p1); guardarAjustes();
-      if(EN_RED){ setTimeout(()=>{ S.redClave = u+'|'+p1; lsSet(LS+'-clave', S.redClave); }, 1500); }
+      if(EN_API){ setTimeout(()=>{ S.redClave = u+'|'+p1; lsSet(LS+'-clave', S.redClave); }, EN_NUBE ? 6000 : 1500); }
       toast('Acceso actualizado'); break; }
     case 'quitar-fondo': S.fondos[t.dataset.l] = ''; guardarLocal(); queueWrite('ajustes/fondos', S.fondos); aplicarAjustes(); render(); break;
     case 'exp-csv-peleas': descargar(slug(d.nombre)+'-peleas.csv', csvPeleas(d)); break;
@@ -15387,6 +15437,21 @@ document.addEventListener('click', async e=>{
     case 'png': { const cv = $(t.dataset.cual==='cartel'?'#cv-cartel':'#cv-res'); if(!cv) break;
       if(t.dataset.cual==='cartel') await dibujarCartel(cv, d); else await dibujarResultados(cv, d);
       cv.toBlob(b=>{ if(b) descargar(slug(d.nombre)+(t.dataset.cual==='cartel'?'-cartel':'-resultados')+'.png', b); else toast('No se pudo crear la imagen'); }, 'image/png'); break; }
+    case 'nube-respaldos': {
+      modal(`<h3>Respaldos de la nube</h3><p class="small muted" style="margin:0">La nube guarda cómo estaban tus datos al final de cada hora. Si algo se borró o se capturó mal, puedes regresar a un respaldo.</p><div id="rs-lista"><p class="muted">Cargando…</p></div><div class="row" style="justify-content:flex-end"><button class="btn" data-act="cerrar">Cerrar</button></div>`);
+      try{ const r = await fetch('/api/respaldos', {cache:'no-store'}); const j = await r.json(); const el = $('#rs-lista');
+        el.innerHTML = (j.respaldos||[]).length ? `<div class="tw"><table><tbody>${j.respaldos.map(k=>{ const [f,hh] = k.split('_'); return `<tr><td class="num">${esc(f)}</td><td class="num">${esc((hh||'').replace('h',''))}:00 h (UTC)</td><td class="r"><button class="btn sm" data-act="nube-restaurar" data-k="${esc(k)}">Restaurar</button></td></tr>`; }).join('')}</tbody></table></div>` : '<p class="muted">Todavía no hay respaldos.</p>';
+      }catch{ $('#rs-lista').innerHTML = '<p class="err">Se necesita señal para ver los respaldos de la nube.</p>'; }
+      break; }
+    case 'nube-restaurar': { const k = t.dataset.k;
+      confirmar('Restaurar respaldo', `Tus derbis regresarán a como estaban en el respaldo <b>${esc(k)}</b>. Lo que se capturó después se perderá.`, 'Restaurar', async ()=>{
+        try{ const r = await fetch('/api/respaldo/'+encodeURIComponent(k), {cache:'no-store'}); const e = await r.json(); const docs = e.docs||{};
+          const nuevos = {}; Object.entries(docs).forEach(([pth,v])=>{ if(pth.startsWith('derbis/')) nuevos[pth.slice(7)] = v; });
+          Object.keys(S.derbis).forEach(id=>{ if(!nuevos[id]) queueWrite('derbis/'+id, null); });
+          Object.entries(nuevos).forEach(([id,v])=>{ v.actualizado = Date.now(); queueWrite('derbis/'+id, v); });
+          S.derbis = nuevos; elegirActual(); guardarLocal(); render(); toast('Respaldo restaurado');
+        }catch{ toast('No se pudo restaurar. Revisa la señal.'); } }, true);
+      break; }
     case 'hist-sel': S.histSel = t.dataset.k || null; render(); if(S.histSel) window.scrollTo({top:0, behavior:'smooth'}); break;
     case 'hist-pdf': { const hh = historial().find(x=>x.k===S.histSel); if(hh) hacerPDF(()=>pdfHistorial(hh)); break; }
     case 'mi-hist-pdf': { const rp = rolPartido(); const hh = rp && historial().find(x=>x.k===claveNombre(rp.p.nombre)); if(hh) hacerPDF(()=>pdfHistorial(hh)); break; }

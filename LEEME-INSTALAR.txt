@@ -1,74 +1,30 @@
-SE LLAMA A GANO  -  APP INSTALABLE
+SE LLAMA A GANO  -  APP CON NUBE (con o sin senal)
 Propiedad de Ing. Francisco Jared Lara Rodriguez  ·  WhatsApp 918-125-5735
 =========================================================================
 
-Esta carpeta es la app lista para instalarse en celulares Android, iPhone,
-tablets y computadoras, con el logo como icono. Una vez instalada funciona
-SIN SENAL (todo se guarda en el equipo).
+COMO ACTUALIZAR TU REPOSITORIO "sellamaagano" EN GITHUB
+1. Descomprime este zip.
+2. En GitHub, entra a tu repositorio sellamaagano > "Add file" > "Upload files".
+3. Arrastra TODO lo que esta adentro de la carpeta (archivos Y la carpeta "netlify")
+   de una sola vez. Los archivos viejos se reemplazan solos.
+4. Abajo: "Commit changes". Netlify publica solo en 1 o 2 minutos.
+   (Cada vez que subes cambios gastas 15 creditos de Netlify; sube todo junto, una sola vez.)
 
-PASO 1. SUBIRLA A INTERNET (gratis, una sola vez)
-------------------------------------------------
-1. Entra a  https://app.netlify.com  y crea una cuenta gratis (con tu correo o Google).
-2. Ve a "Sites" > "Add new site" > "Deploy manually".
-3. Arrastra ESTA CARPETA completa (la que tiene index.html) al recuadro.
-4. Netlify te da una direccion tipo  https://algo-raro.netlify.app
-   En "Site configuration" > "Change site name" ponle por ejemplo:
-   sellamaagano  ->  https://sellamaagano.netlify.app
-   (Si despues quieres tu propio dominio, tipo sellamaagano.com, ahi mismo se agrega.)
+COMO FUNCIONA LA NUBE
+- Todo lo que capturas se guarda en tu equipo Y en tu nube de Netlify.
+- Si se va la senal: la app sigue funcionando normal y guarda los cambios en el
+  equipo. Cuando regresa la senal, los sube solos.
+- Si se borra el celular, se pierde o cambias de equipo: instala la app otra vez,
+  entra con tu usuario y contrasena, y aparecen todos tus derbis.
+- La nube guarda un respaldo cada hora (Ajustes > "Respaldos de la nube").
+- Solo el administrador puede cambiar datos. Los partidos entran a
+  https://sellamaagano.netlify.app con su codigo y solo VEN sus peleas y puntos.
 
-PASO 2. INSTALARLA
-------------------
-ANDROID (Chrome):  abre la direccion > menu de 3 puntos > "Instalar app"
-                   (o "Agregar a la pantalla principal").
-IPHONE (Safari):   abre la direccion > boton Compartir > "Agregar a inicio".
-WINDOWS / MAC (Chrome o Edge): abre la direccion > icono de instalar en la
-                   barra de direccion (pantallita con flecha) > "Instalar".
+SI OLVIDAS TU CONTRASENA
+En Netlify: tu proyecto > "Data & storage" > "Blobs" > store "sellamaagano".
+Avisame y te ayudo a restablecerla sin perder datos.
 
-Queda el icono con el logo. Se abre como app, sin barra del navegador.
-
-COMO SE GUARDAN LOS DATOS
--------------------------
-- Cada equipo guarda sus propios datos.
-- Para pasar derbis de un equipo a otro: Ajustes > "Respaldar todo" en uno,
-  y Ajustes > "Restaurar respaldo" en el otro.
-- Para que los PARTIDOS vean sus peleas en vivo en su celular sin senal,
-  usa el programa de escritorio (Wi-Fi del palenque).
-
-ACTUALIZAR LA APP
------------------
-Cuando te mande una version nueva, vuelve a arrastrar la carpeta en Netlify
-("Deploys" > arrastrar). Los equipos instalados se actualizan solos la
-siguiente vez que abran la app con senal. Sus datos NO se borran.
-
-PASO 3 (OPCIONAL). GOOGLE PLAY STORE
-------------------------------------
-Necesitas:
-- La app ya subida (Paso 1).
-- Cuenta de desarrollador de Google Play: https://play.google.com/console
-  (pago unico de 25 dolares; Google pide verificar identidad).
-
-1. Entra a  https://www.pwabuilder.com  y pega tu direccion de Netlify.
-2. Toca "Package for stores" > "Android" > "Generate Package".
-   Nombre del paquete sugerido: com.sellamaagano.app
-3. Descarga el ZIP. Trae:
-   - un archivo .aab  (es el que se sube a Google Play)
-   - un archivo .apk  (para instalar directo en celulares, sin Play Store)
-   - un archivo "signing.keystore" con su contrasena  ->  GUARDALO MUY BIEN,
-     sin el no podras actualizar la app nunca.
-   - un archivo "assetlinks.json"
-4. Crea en esta carpeta otra carpeta llamada  .well-known  y mete ahi el
-   assetlinks.json. Vuelve a subir la carpeta a Netlify. (Esto quita la barra
-   del navegador dentro de la app de Android.)
-5. En Play Console: "Crear app" > sube el .aab, llena la ficha (descripcion,
-   capturas de pantalla, icono 512 = icon-512.png) y en "Politica de
-   privacidad" pon:  https://TU-DIRECCION.netlify.app/privacidad.html
-
-AVISO IMPORTANTE SOBRE PLAY STORE
----------------------------------
-Google revisa cada app y sus reglas prohiben contenido que muestre o promueva
-violencia o crueldad contra animales. Existe el riesgo de que rechacen una app
-de palenques. Para que tenga mejor oportunidad, describela como lo que es:
-una herramienta de ADMINISTRACION de eventos (registro, cotejo por peso,
-control de resultados, caja), sin fotos de peleas ni sangre en las capturas.
-Aun asi, la decision es de Google. Si la rechazan, la app sigue funcionando
-igual instalada desde tu direccion de Netlify o con el archivo .apk directo.
+INSTALAR EN CELULAR
+ANDROID (Chrome): abre https://sellamaagano.netlify.app > 3 puntos > "Instalar app".
+IPHONE (Safari):  abre la direccion > Compartir > "Agregar a inicio".
+LAPTOP (Chrome/Edge): abre la direccion > icono de instalar en la barra > "Instalar".

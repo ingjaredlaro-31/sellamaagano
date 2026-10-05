@@ -15237,7 +15237,7 @@ function nubeDB(){
     clearTimeout(timer);
     try{
       const r = await fetch('/api/todo?rev=' + (listo ? rev : 0), {cache:'no-store'});
-      if(r.status===404){ sinFuncion = true; S.sync = 'sinnube'; setSync(); return; }
+      if(r.status===404){ sinFuncion = true; S.sync = 'sinnube'; S.db = null; S.ajListos = true; setSync(); render(); return; }
       if(!r.ok) throw 0;
       const j = await r.json();
       if(S.sync==='offline' || S.sync==='conectando'){ S.sync = 'ok'; setSync(); subirTodo(); }
@@ -15246,7 +15246,7 @@ function nubeDB(){
       else { for(const [k,v] of Object.entries(j.docs||{})){ docs[k] = v; cambio = true; } for(const k of (j.borrados||[])){ if(k in docs){ delete docs[k]; cambio = true; } } }
       rev = j.rev || 0; listo = true;
       if(cambio) emitir();
-    }catch{ if(S.sync!=='offline'){ S.sync = 'offline'; setSync(); } }
+    }catch{ if(S.sync!=='offline'){ S.sync = 'offline'; setSync(); } if(!S.ajListos){ S.ajListos = true; render(); } }
     timer = setTimeout(sondear, cada());
   }
   document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && !sinFuncion) sondear(); });

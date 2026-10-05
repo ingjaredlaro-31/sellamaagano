@@ -94,7 +94,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .sync::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#7CF0A6;margin-right:7px;vertical-align:1px;box-shadow:0 0 0 3px rgba(124,240,166,.22)}
 .sync.off::before{background:#e8a33a;box-shadow:0 0 0 3px rgba(232,163,58,.25)}
 .tabs{max-width:1180px;margin:0 auto;padding:4px 16px 10px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
-.tab{appearance:none;border:1px solid transparent;background:none;color:inherit;opacity:.82;padding:7px 14px;font-family:var(--f-display);font-weight:700;font-size:1.02rem;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:7px;border-radius:99px;transition:background .15s,opacity .15s}
+.tab{appearance:none;border:1px solid transparent;background:none;color:inherit;opacity:.82;padding:7px 11px;font-family:var(--f-display);font-weight:700;font-size:.98rem;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:7px;border-radius:99px;transition:background .15s,opacity .15s}
 .tab:hover{opacity:1;background:rgba(255,255,255,.1)}
 .tab[aria-current="page"]{opacity:1;background:rgba(0,0,0,.28);border-color:rgba(226,189,98,.65);box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
 .tab svg{width:17px;height:17px}
@@ -442,6 +442,35 @@ body.pt-on main{max-width:none;padding:0;gap:0}
 .voz-it.on .voz-r{border-color:var(--gold);background:radial-gradient(circle,var(--gold) 45%,transparent 50%)}
 .voz-tx{display:flex;flex-direction:column;min-width:0;flex:1}
 .voz-tx small{color:var(--muted)}
+.ag-grid{grid-template-columns:minmax(280px,360px) minmax(0,1fr);align-items:start}
+@media (max-width:860px){ .ag-grid{grid-template-columns:1fr} }
+.ag-ev{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;padding:16px}
+.ag-ev h3{margin:4px 0 0}
+.ag-fecha{width:74px;border-radius:14px;background:linear-gradient(160deg,color-mix(in srgb,var(--lado-a) 92%,#000),color-mix(in srgb,var(--lado-b) 85%,#000));color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;text-align:center;box-shadow:inset 0 0 0 1px rgba(226,189,98,.45);align-self:start}
+.ag-fecha b{font-family:var(--f-display);font-size:2.2rem;line-height:1}
+.ag-fecha span{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.ag-fecha small{font-size:.72rem;color:var(--gold-2);margin-top:2px}
+.ag-cuerpo{display:flex;flex-direction:column;gap:5px;min-width:0}
+.ag-cliente{font-size:.95rem;overflow-wrap:anywhere}
+.ag-grande{box-shadow:var(--shadow-lg),0 0 0 2px color-mix(in srgb,var(--gold-2) 60%,transparent)}
+.ag-grande .ag-fecha{width:92px}
+.ag-grande .ag-fecha b{font-size:2.8rem}
+.ag-aviso{appearance:none;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;font:inherit;color:inherit;border-color:color-mix(in srgb,var(--gold-2) 55%,var(--line));padding:14px 16px;width:100%}
+.ag-aviso > svg{width:28px;height:28px;color:var(--gold);flex:none}
+.ag-aviso span{display:flex;flex-direction:column}
+.ag-aviso small{color:var(--muted)}
+.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-h{text-align:center;font-size:.7rem;font-weight:700;color:var(--muted);padding:4px 0;letter-spacing:.08em}
+.cal-d{appearance:none;border:1px solid transparent;background:var(--surface-2);border-radius:10px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--fg);font-weight:600;min-width:0;padding:0}
+.cal-d:hover{border-color:var(--line-2)}
+.cal-d.vacio{background:transparent;cursor:default}
+.cal-d.hoy{border-color:var(--gold);color:var(--gold)}
+.cal-d.con{background:color-mix(in srgb,var(--gold-2) 16%,var(--surface-2))}
+.cal-pts{display:flex;gap:2px;height:6px}
+.cal-pts i,.cal-ley{width:6px;height:6px;border-radius:50%;display:inline-block}
+.cal-ley{margin-right:5px}
+.cal-pts i.warn,.cal-ley.warn{background:var(--warn)} .cal-pts i.ok,.cal-ley.ok{background:var(--ok)} .cal-pts i.acc,.cal-ley.acc{background:var(--gold)} .cal-pts i.bad{background:var(--bad)}
+input[type=time]{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--r-sm);padding:10px 12px;font-size:1rem;color:var(--fg);width:100%;min-width:0}
 .lienzo{width:100%;height:auto;aspect-ratio:1080/1350;border-radius:12px;display:block;margin-top:12px;background:#0d1014;box-shadow:var(--shadow)}
 .red-url{display:flex;gap:16px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;margin-top:10px;flex-wrap:wrap}
 .red-url img{width:150px;height:150px;image-rendering:pixelated;background:#fff;border-radius:8px;padding:4px}
@@ -13341,6 +13370,7 @@ const ICON = {
   mas:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
   sol:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
   luna:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
+  agenda:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M7.5 13.5h3M13.5 13.5h3M7.5 17h3"/></svg>',
   salir:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>',
   llave:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 9.2-9.2M17 6l3 3M14 9l2 2"/></svg>',
   user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
@@ -13391,9 +13421,9 @@ const DERBY_DEF = () => ({
 const S = {
   ajustes: {...AJ_DEF}, derbis:{}, actual:null, vista:'derbis', modo:'local', sync:'',
   pick:null, sel:new Set(), reloj:null, peleaSel:null, ronda:'todas', abiertos:{}, db:null, remotePending:false,
-  rol:null, puedeEscribir:null, ajListos:false, fondos:{a:'',b:''}, hq:'', histSel:null, modoPantalla:false
+  rol:null, puedeEscribir:null, ajListos:false, fondos:{a:'',b:''}, hq:'', histSel:null, modoPantalla:false, agenda:{eventos:[]}, agFiltro:'proximos', agMes:'', agDia:''
 };
-const VISTAS = [['derbis','Derbis'],['partidos','Partidos'],['cotejo','Cotejo'],['peleas','Peleas'],['tabla','Tabla'],['caja','Caja'],['historial','Historial'],['redes','Redes'],['ajustes','Ajustes']];
+const VISTAS = [['derbis','Derbis'],['agenda','Agenda'],['partidos','Partidos'],['cotejo','Cotejo'],['peleas','Peleas'],['tabla','Tabla'],['caja','Caja'],['historial','Historial'],['redes','Redes'],['ajustes','Ajustes']];
 // ¿Esta copia puede usar la nube? (la versión descargada para usar sin internet nunca)
 const PUEDE_NUBE = !!window.__RED__ || !!window.__NUBE__ || (!window.__OFFLINE__ && !!(window.claude && typeof window.claude.use==='function'));
 
@@ -13405,7 +13435,7 @@ function lsGet(k){ try{ return JSON.parse(localStorage.getItem(k) || 'null'); }c
 function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch{ return false; } }
 const pend = new Map(), writing = new Set(), timers = {}, intentos = {};
 function guardarCopia(){
-  lsSet(LS, {ajustes:S.ajustes, derbis:S.derbis, fondos:S.fondos});
+  lsSet(LS, {ajustes:S.ajustes, derbis:S.derbis, fondos:S.fondos, agenda:S.agenda});
   if(PUEDE_NUBE) lsSet(LS+'-pend', Object.fromEntries(pend));
 }
 function guardarLocal(){ guardarCopia(); lsSet(LS+'-ui', {actual:S.actual, vista:S.vista}); }
@@ -13505,6 +13535,7 @@ async function init(){
   S.ajustes = {...AJ_DEF, ...(copia.ajustes||{})};
   S.derbis = copia.derbis || {};
   S.fondos = copia.fondos || {a:'',b:''};
+  S.agenda = (copia.agenda && Array.isArray(copia.agenda.eventos)) ? copia.agenda : {eventos:[]};
   S.rol = lsGet(LS+'-rol');
   if(S.modoPantalla && !esAdmin()){ S.modoPantalla = false; const ui2 = lsGet(LS+'-ui')||{}; const dd = S.derbis[ui2.actual] || Object.values(S.derbis)[0]; if(dd && !(S.rol && S.rol.tipo==='partido')) S.rol = {tipo:'pantalla', derby:dd.id}; }
   if(!PUEDE_NUBE){ S.puedeEscribir = true; S.ajListos = true; }
@@ -13513,6 +13544,7 @@ async function init(){
     const D = window.__DATOS__;
     if(!copia.ajustes && D.ajustes) S.ajustes = {...AJ_DEF, ...D.ajustes};
     if(!copia.fondos && D.fondos) S.fondos = D.fondos;
+    if(!copia.agenda && D.agenda) S.agenda = D.agenda;
     Object.values(D.derbis||{}).forEach(x=>{ const y=S.derbis[x.id]; if(!y || (y.actualizado||0) < (x.actualizado||0)) S.derbis[x.id]=x; });
     guardarCopia();
   }
@@ -13564,6 +13596,12 @@ function escuchar(ui){
     primero = false;
   }, ()=>{ S.sync='offline'; setSync(); setTimeout(()=>escuchar(), 8000); });
   if(escuchar.aj) return; escuchar.aj = true;
+  db.doc('privado/agenda').onSnapshot(snap=>{
+    if(pend.has('privado/agenda') || writing.has('privado/agenda') || !snap.exists) return;
+    const a = snap.data(); if(!a || !Array.isArray(a.eventos)) return;
+    if((a.actualizado||0) >= (S.agenda.actualizado||0)){ if(JSON.stringify(a)!==JSON.stringify(S.agenda)){ S.agenda = JSON.parse(JSON.stringify(a)); guardarCopia(); renderRemoto(); } }
+    else if(esAdmin()) queueWrite('privado/agenda', S.agenda);
+  }, ()=>{});
   db.doc('ajustes/fondos').onSnapshot(snap=>{
     if(pend.has('ajustes/fondos') || writing.has('ajustes/fondos')) return;
     const f = snap.exists ? {a:'',b:'',...snap.data()} : {a:'',b:''};
@@ -13866,6 +13904,7 @@ function renderNow(){
   else if(S.rol.tipo==='partido'){ const r = rolPartido(); html = r ? vMiPartido(r.d, r.p) : `<div class="card empty">${emblema()}<h2>Ese partido ya no está en el derby</h2><p>Puede que el administrador lo haya quitado o borrado el derby.</p><button class="btn pri" data-act="salir">Volver al inicio</button></div>`; }
   else if(S.vista==='derbis') html = vDerbis();
   else if(S.vista==='ajustes') html = vAjustes();
+  else if(S.vista==='agenda') html = vAgenda();
   else if(!d) html = sinDerby();
   else if(S.vista==='historial') html = vHistorial();
   else if(S.vista==='caja' && d) html = vCaja(d);
@@ -13893,7 +13932,7 @@ function vDerbis(){
   const lista = Object.values(S.derbis).sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||'') || (b.actualizado-a.actualizado));
   const d = cur();
   let h = `<div class="head"><div><div class="eyebrow">${esc(S.ajustes.palenque)}</div><h2>Derbis</h2><p>Elige el derby con el que vas a trabajar o crea uno nuevo.</p></div>
-    <div class="row"><button class="btn" data-act="ejemplo">${ICON.gallo} Crear derby de ejemplo</button><button class="btn pri" data-act="nuevo-derby">${ICON.plus} Nuevo derby</button></div></div>`;
+    <div class="row"><button class="btn" data-act="ejemplo">${ICON.gallo} Crear derby de ejemplo</button><button class="btn pri" data-act="nuevo-derby">${ICON.plus} Nuevo derby</button></div></div>` + avisoAgenda();
   if(!lista.length){
     h += `<div class="card empty">${emblema()}<h2>Aún no hay derbis</h2><p>Crea tu primer derby. Define cuántos gallos lleva cada partido, la tolerancia de peso y los premios; luego registra partidos y haz el cotejo en segundos.</p><div class="row" style="justify-content:center"><button class="btn pri lg" data-act="nuevo-derby">${ICON.plus} Nuevo derby</button><button class="btn lg" data-act="ejemplo">Ver un ejemplo</button></div></div>`;
     return h;
@@ -14334,7 +14373,7 @@ table{border-collapse:collapse;width:100%;margin-bottom:8px}th,td{border:1px sol
 
 async function appSinInternet(modo){
   const a = S.ajustes;
-  const datos = JSON.stringify({ajustes:S.ajustes, derbis:S.derbis, fondos:S.fondos}).replace(/</g,'\\u003c');
+  const datos = JSON.stringify({ajustes:S.ajustes, derbis:S.derbis, fondos:S.fondos, agenda:S.agenda}).replace(/</g,'\\u003c');
   let libs = FUENTE.libs.slice();
   if(!libs.length){
     try{ for(const f of ['lib/jspdf.umd.min.js','lib/jspdf.plugin.autotable.min.js','lib/qrcode.js','lib/jsQR.js']){ const r = await fetch(f); if(!r.ok) throw 0; libs.push(await r.text()); } }
@@ -14375,7 +14414,8 @@ function rolPartido(){
   const d = S.derbis[S.rol.derby]; const p = d && d.partidos.find(x=>x.id===S.rol.pid);
   return p ? {d, p} : null;
 }
-function setRol(r){ if(r && r.tipo==='admin' && S.sync==='permiso'){ S.sync='ok'; setTimeout(subirTodo, 300); } S.rol = r; if(r) lsSet(LS+'-rol', r); else { try{ localStorage.removeItem(LS+'-rol'); }catch{} } window.scrollTo(0,0); render(); }
+function setRol(r){ if(r && r.tipo==='admin' && S.sync==='permiso'){ S.sync='ok'; setTimeout(subirTodo, 300); }
+  if(r && r.tipo==='admin' && S.db && S.db._completo) setTimeout(()=>S.db._completo(), 200); S.rol = r; if(r) lsSet(LS+'-rol', r); else { try{ localStorage.removeItem(LS+'-rol'); }catch{} } window.scrollTo(0,0); render(); }
 async function hashClave(t){
   const txt = 'sellamaagano:' + t;
   try{ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(txt)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
@@ -15308,7 +15348,7 @@ function nubeDB(){
   async function sondear(){
     clearTimeout(timer);
     try{
-      const r = await fetch('/api/todo?rev=' + (listo ? rev : 0), {cache:'no-store'});
+      const r = await fetch('/api/todo?rev=' + (listo ? rev : 0), {cache:'no-store', headers: auth()});
       if(r.status===404){ sinFuncion = true; S.sync = 'sinnube'; S.db = null; S.ajListos = true; setSync(); render(); return; }
       if(!r.ok) throw 0;
       const j = await r.json();
@@ -15321,10 +15361,10 @@ function nubeDB(){
     }catch{ if(S.sync!=='offline'){ S.sync = 'offline'; setSync(); } if(!S.ajListos){ S.ajListos = true; render(); } }
     timer = setTimeout(sondear, cada());
   }
+  function auth(){ const c = S.redClave || lsGet(LS+'-clave'); return c ? {'X-Clave': btoa(unescape(encodeURIComponent(c)))} : {}; }
   document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && !sinFuncion) sondear(); });
   window.addEventListener('online', ()=>{ if(!sinFuncion) sondear(); });
   sondear();
-  const auth = () => { const c = S.redClave || lsGet(LS+'-clave'); return c ? {'X-Clave': btoa(unescape(encodeURIComponent(c)))} : {}; };
   async function enviar(method, path, body){
     if(sinFuncion) throw {code:'unavailable'};
     let r; try{ r = await fetch('/api/doc?path='+encodeURIComponent(path), {method, headers:{'Content-Type':'application/json', ...auth()}, body: body ? JSON.stringify(body) : undefined}); }
@@ -15337,13 +15377,14 @@ function nubeDB(){
   return {
     doc: path => ({ set: d => enviar('PUT', path, d), delete: () => enviar('DELETE', path),
       onSnapshot(next){ const f = () => { if(!listo) return; const d = docs[path]; next({exists:!!d, data:()=>d, metadata:{fromCache:false}}); }; subs.push(f); return ()=>{}; } }),
-    collection: c => ({ onSnapshot(next){ const f = () => { if(!listo) return; next({docs: Object.keys(docs).filter(k=>k.startsWith(c+'/') && k.split('/').length===2).map(k=>({id:k.split('/')[1], data:()=>docs[k]})), metadata:{fromCache:false}}); }; subs.push(f); return ()=>{}; } })
+    collection: c => ({ onSnapshot(next){ const f = () => { if(!listo) return; next({docs: Object.keys(docs).filter(k=>k.startsWith(c+'/') && k.split('/').length===2).map(k=>({id:k.split('/')[1], data:()=>docs[k]})), metadata:{fromCache:false}}); }; subs.push(f); return ()=>{}; } }),
+    _completo(){ if(!sinFuncion){ listo = false; sondear(); } }
   };
 }
 function redDB(){
   const docs = {}; const subs = []; let listo = false;
   const emitir = () => subs.forEach(f=>f());
-  async function cargar(){ try{ const r = await fetch('/api/todo', {cache:'no-store'}); const j = await r.json(); Object.keys(docs).forEach(k=>delete docs[k]); Object.assign(docs, j.docs||{}); listo = true; emitir(); }catch{ setTimeout(cargar, 3000); } }
+  async function cargar(){ try{ const c = S.redClave || lsGet(LS+'-clave'); const r = await fetch('/api/todo', {cache:'no-store', headers: c ? {'X-Clave': btoa(unescape(encodeURIComponent(c)))} : {}}); const j = await r.json(); Object.keys(docs).forEach(k=>delete docs[k]); Object.assign(docs, j.docs||{}); listo = true; emitir(); }catch{ setTimeout(cargar, 3000); } }
   function conectar(){
     const es = new EventSource('/api/eventos');
     es.onmessage = e => { let m; try{ m = JSON.parse(e.data); }catch{ return; }
@@ -15363,7 +15404,8 @@ function redDB(){
     doc: path => ({ set: d => enviar('PUT', path, d), delete: () => enviar('DELETE', path),
       onSnapshot(next){ const f = () => { if(!listo) return; const d = docs[path]; next({exists:!!d, data:()=>d, metadata:{fromCache:false}}); }; subs.push(f); return ()=>{}; } }),
     collection: c => ({ onSnapshot(next){ const f = () => { if(!listo) return; next({docs: Object.keys(docs).filter(k=>k.startsWith(c+'/') && k.split('/').length===2).map(k=>({id:k.split('/')[1], data:()=>docs[k]})), metadata:{fromCache:false}}); }; subs.push(f); return ()=>{}; } }),
-    _cargar: cargar
+    _cargar: cargar,
+    _completo: cargar
   };
 }
 async function infoRed(){ try{ const r = await fetch('/api/info', {cache:'no-store'}); return await r.json(); }catch{ return null; } }
@@ -15385,6 +15427,176 @@ function vRedLocal(){
       <li>Pasa tus derbis: aquí toca <b>Respaldar todo</b> y allá <b>Restaurar respaldo</b>.</li>
       <li>En Ajustes de la app del servidor aparece el código QR para que los partidos entren.</li>
     </ol></div>`;
+}
+
+/* ============================== agenda de eventos (privada) ============================== */
+const EST_AG = {porconf:['Por confirmar','warn'], confirmado:['Confirmado','ok'], realizado:['Realizado','acc'], cancelado:['Cancelado','bad']};
+const TIPOS_AG = ['Derby','Peleas de compromiso','Torneo','Feria','Palenque particular','Otro'];
+function agenda(){ if(!S.agenda || !Array.isArray(S.agenda.eventos)) S.agenda = {eventos:[]}; return S.agenda; }
+function guardarAgenda(){ S.agenda.actualizado = Date.now(); marcarGuardado(); guardarLocal(); queueWrite('privado/agenda', S.agenda); render(); }
+const saldoEv = e => Math.max(0, (+e.precio||0) - (+e.anticipo||0) - (e.pagos||[]).reduce((s,p)=>s+(+p.monto||0),0));
+const pagadoEv = e => (+e.anticipo||0) + (e.pagos||[]).reduce((s,p)=>s+(+p.monto||0),0);
+function fechaLarga(f, conDia=true){ try{ const [y,m,d] = f.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('es-MX', conDia?{weekday:'long', day:'numeric', month:'long', year:'numeric'}:{day:'numeric', month:'long'}); }catch{ return f||''; } }
+function diasPara(f){ try{ const [y,m,d] = f.split('-').map(Number); const a = new Date(y,m-1,d), h = new Date(); h.setHours(0,0,0,0); return Math.round((a-h)/86400000); }catch{ return null; } }
+function hora12(h){ if(!h) return ''; const [H,M] = h.split(':').map(Number); return `${((H+11)%12)+1}:${String(M||0).padStart(2,'0')} ${H<12?'a.m.':'p.m.'}`; }
+function telWA(t){ let n = String(t||'').replace(/\D/g,''); if(n.length===10) n = '52'+n; return n; }
+function linkMapa(e){ const q = [e.direccion, e.lugar, e.ciudad].filter(Boolean).join(', '); return q ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q) : ''; }
+function linkCalendario(e){
+  const f = (e.fecha||'').replace(/-/g,''); if(!f) return '';
+  let fechas;
+  if(e.hora){ const [H,M] = e.hora.split(':').map(Number); const ini = `${f}T${String(H).padStart(2,'0')}${String(M||0).padStart(2,'0')}00`; const fin = `${f}T${String(Math.min(23,H+6)).padStart(2,'0')}${String(M||0).padStart(2,'0')}00`; fechas = ini+'/'+fin; }
+  else { const [y,m,d] = e.fecha.split('-').map(Number); const sig = new Date(y,m-1,d+1); fechas = f + '/' + sig.getFullYear() + String(sig.getMonth()+1).padStart(2,'0') + String(sig.getDate()).padStart(2,'0'); }
+  const det = `Contrata: ${e.cliente||''}${e.telefono?' · Tel. '+e.telefono:''}\nPrecio: ${money(e.precio)} · Saldo: ${money(saldoEv(e))}${e.notas?'\n'+e.notas:''}`;
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent((e.nombre||e.tipo||'Evento') + ' · ' + (S.ajustes.app||'')) + '&dates=' + fechas + '&location=' + encodeURIComponent([e.lugar, e.ciudad].filter(Boolean).join(', ')) + '&details=' + encodeURIComponent(det);
+}
+function proximosEventos(){ const hoyS = hoy(); return agenda().eventos.filter(e=>e.estado!=='cancelado' && e.estado!=='realizado' && (e.fecha||'') >= hoyS).sort((a,b)=>(a.fecha+(a.hora||'')).localeCompare(b.fecha+(b.hora||''))); }
+function tarjetaEvento(e, grande){
+  const [et, ec] = EST_AG[e.estado] || EST_AG.porconf, dd = diasPara(e.fecha), sal = saldoEv(e);
+  const cuando = dd===0 ? '¡Es hoy!' : dd===1 ? 'Mañana' : dd>1 ? `Faltan ${dd} días` : dd===-1 ? 'Fue ayer' : dd<-1 ? `Hace ${-dd} días` : '';
+  const wa = telWA(e.telefono), mapa = linkMapa(e), cal = linkCalendario(e);
+  return `<div class="card ag-ev ${grande?'ag-grande':''}">
+    <div class="ag-fecha"><b class="num">${esc((e.fecha||'').slice(8,10))}</b><span>${esc(fechaLarga(e.fecha,false).split(' ').slice(2).join(' ') || '')}</span>${e.hora?`<small class="num">${hora12(e.hora)}</small>`:''}</div>
+    <div class="ag-cuerpo">
+      <div class="row" style="gap:6px"><span class="chip ${ec}">${et}</span><span class="chip">${esc(e.tipo||'Evento')}</span>${cuando?`<span class="chip ${dd>=0&&dd<=3?'warn':''}">${cuando}</span>`:''}</div>
+      <h3>${esc(e.nombre||e.tipo||'Evento')}</h3>
+      <div class="small muted">${esc(fechaLarga(e.fecha))}${e.hora?' · '+hora12(e.hora):''}</div>
+      <div class="small">${[e.lugar, e.ciudad].filter(Boolean).map(esc).join(' · ') || '<span class="muted">Sin lugar</span>'}</div>
+      <div class="ag-cliente"><b>${esc(e.cliente||'Sin contratante')}</b>${e.empresa?` · ${esc(e.empresa)}`:''}${e.telefono?` · <span class="num">${esc(e.telefono)}</span>`:''}</div>
+      <div class="row small num" style="gap:14px;margin-top:2px"><span>Precio <b>${money(e.precio)}</b></span><span>Pagado <b class="res-g">${money(pagadoEv(e))}</b></span><span>${sal?`Debe <b class="res-p">${money(sal)}</b>`:'<b class="res-g">Liquidado</b>'}</span></div>
+      <div class="row" style="margin-top:6px">
+        ${wa?`<a class="btn sm ok" href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp</a>`:''}
+        ${mapa?`<a class="btn sm" href="${mapa}" target="_blank" rel="noopener">Ver mapa</a>`:''}
+        ${cal?`<a class="btn sm" href="${cal}" target="_blank" rel="noopener">${ICON.agenda} A mi calendario</a>`:''}
+        <button class="btn sm" data-act="ag-pdf" data-id="${e.id}">${ICON.dl} Confirmación PDF</button>
+        ${sal && e.estado!=='cancelado'?`<button class="btn sm" data-act="ag-abono" data-id="${e.id}">${ICON.plus} Abono</button>`:''}
+        <button class="btn sm" data-act="ag-derby" data-id="${e.id}">${ICON.derbis} Crear derby</button>
+        <span class="sp"></span><button class="btn sm pri" data-act="ag-editar" data-id="${e.id}">Editar</button>
+      </div>
+    </div></div>`;
+}
+function vAgenda(){
+  const ag = agenda(), hoyS = hoy(), prox = proximosEventos();
+  const anio = hoyS.slice(0,4), mesS = hoyS.slice(0,7);
+  const delAnio = ag.eventos.filter(e=>(e.fecha||'').startsWith(anio) && e.estado!=='cancelado');
+  const cobrado = delAnio.reduce((s,e)=>s+pagadoEv(e),0);
+  const porCobrar = ag.eventos.filter(e=>e.estado!=='cancelado').reduce((s,e)=>s+saldoEv(e),0);
+  const esteMes = ag.eventos.filter(e=>(e.fecha||'').startsWith(mesS) && e.estado!=='cancelado').length;
+  const filtro = S.agFiltro || 'proximos';
+  let lista = ag.eventos.slice();
+  if(filtro==='proximos') lista = lista.filter(e=>(e.fecha||'')>=hoyS && e.estado!=='cancelado');
+  else if(filtro==='pasados') lista = lista.filter(e=>(e.fecha||'')<hoyS || e.estado==='realizado');
+  else if(filtro==='debe') lista = lista.filter(e=>saldoEv(e)>0 && e.estado!=='cancelado');
+  else if(filtro==='mes') lista = lista.filter(e=>(e.fecha||'').startsWith(S.agMes||mesS));
+  else if(filtro==='dia') lista = lista.filter(e=>e.fecha===S.agDia);
+  lista.sort((a,b)=> filtro==='pasados' ? (b.fecha||'').localeCompare(a.fecha||'') : (a.fecha+(a.hora||'')).localeCompare(b.fecha+(b.hora||'')));
+  let h = `<div class="head"><div><div class="eyebrow">Solo administrador · privada</div><h2>Agenda de eventos</h2><p>Los eventos donde te contratan, con los datos de quien te contrata y lo que te deben. Nadie más la ve.</p></div>
+    <div class="row"><button class="btn" data-act="ag-pdf-lista">${ICON.dl} Agenda en PDF</button><button class="btn pri" data-act="ag-nuevo">${ICON.plus} Nuevo evento</button></div></div>
+  <div class="stats caja-stats">
+    <div class="stat"><b>${prox.length}</b><span>Próximos eventos</span></div>
+    <div class="stat"><b>${esteMes}</b><span>Este mes</span></div>
+    <div class="stat"><b class="num" style="color:${porCobrar?'var(--warn)':'inherit'}">${money(porCobrar)}</b><span>Te deben</span></div>
+    <div class="stat"><b class="num" style="color:var(--ok)">${money(cobrado)}</b><span>Cobrado en ${anio}</span></div>
+  </div>`;
+  if(prox[0]) h += `<div class="sec-h" style="margin:0"><span class="sec-ic">${ICON.agenda}</span><h3>Tu próximo evento</h3></div>` + tarjetaEvento(prox[0], true);
+  h += `<div class="grid ag-grid"><div>${calendarioMes()}</div><div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+    <div class="seg" role="group" aria-label="Filtro">${[['proximos','Próximos'],['mes','Del mes'],['debe','Me deben'],['pasados','Pasados'],['todos','Todos']].map(([k,t])=>`<button class="seg-b" data-act="ag-filtro" data-f="${k}" aria-pressed="${filtro===k}">${t}</button>`).join('')}</div>
+    ${lista.length ? lista.map(e=>tarjetaEvento(e)).join('') : `<div class="card empty" style="padding:30px 16px">${emblema()}<h3>${ag.eventos.length?'No hay eventos en este filtro':'Agenda vacía'}</h3><p>${ag.eventos.length?'Cambia el filtro o elige otro mes en el calendario.':'Agrega tu primer evento: fecha, lugar, quién te contrata y cuánto te van a pagar.'}</p><button class="btn pri" data-act="ag-nuevo">${ICON.plus} Nuevo evento</button></div>`}
+  </div></div>`;
+  return h;
+}
+function calendarioMes(){
+  const mes = S.agMes || hoy().slice(0,7); const [y,m] = mes.split('-').map(Number);
+  const primero = new Date(y, m-1, 1), dias = new Date(y, m, 0).getDate(), ini = (primero.getDay()+6)%7;
+  const porDia = {}; agenda().eventos.forEach(e=>{ if((e.fecha||'').startsWith(mes)) (porDia[+e.fecha.slice(8,10)] ||= []).push(e); });
+  const titulo = primero.toLocaleDateString('es-MX',{month:'long', year:'numeric'});
+  let celdas = '';
+  for(let i=0;i<ini;i++) celdas += '<div class="cal-d vacio"></div>';
+  const hoyS = hoy();
+  for(let d=1; d<=dias; d++){
+    const f = `${mes}-${String(d).padStart(2,'0')}`, evs = porDia[d] || [];
+    celdas += `<button class="cal-d ${f===hoyS?'hoy':''} ${evs.length?'con':''}" data-act="ag-dia" data-f="${f}" aria-label="${d}${evs.length?', '+evs.length+' evento(s)':''}"><span class="num">${d}</span><span class="cal-pts">${evs.slice(0,3).map(e=>`<i class="${(EST_AG[e.estado]||EST_AG.porconf)[1]}"></i>`).join('')}</span></button>`;
+  }
+  return `<div class="card cal"><div class="row" style="margin-bottom:10px"><button class="icon-btn" data-act="ag-mes" data-d="-1" aria-label="Mes anterior">‹</button><h3 style="margin:0;flex:1;text-align:center">${esc(titulo.charAt(0).toUpperCase()+titulo.slice(1))}</h3><button class="icon-btn" data-act="ag-mes" data-d="1" aria-label="Mes siguiente">›</button></div>
+    <div class="cal-g">${['L','M','M','J','V','S','D'].map(x=>`<div class="cal-h">${x}</div>`).join('')}${celdas}</div>
+    <div class="row small muted" style="margin-top:10px;gap:12px"><span><i class="cal-ley warn"></i>Por confirmar</span><span><i class="cal-ley ok"></i>Confirmado</span><span><i class="cal-ley acc"></i>Realizado</span></div></div>`;
+}
+function modalEvento(e){
+  const n = !e; e = e || {fecha: S.agDia || hoy(), estado:'porconf', tipo:'Derby'};
+  modal(`<h3>${n?'Nuevo evento':'Editar evento'}</h3>
+    <div class="fields">
+      <label class="f"><span>Fecha</span><input type="date" id="ag-fecha" value="${esc(e.fecha||'')}"></label>
+      <label class="f"><span>Hora</span><input type="time" id="ag-hora" value="${esc(e.hora||'')}"></label>
+      <label class="f"><span>Tipo</span><select id="ag-tipo">${TIPOS_AG.map(t=>`<option ${e.tipo===t?'selected':''}>${t}</option>`).join('')}</select></label>
+      <label class="f"><span>Estado</span><select id="ag-estado">${Object.entries(EST_AG).map(([k,[t]])=>`<option value="${k}" ${e.estado===k?'selected':''}>${t}</option>`).join('')}</select></label>
+    </div>
+    <label class="f"><span>Nombre del evento</span><input type="text" id="ag-nombre" value="${esc(e.nombre||'')}" placeholder="Ej. Gran Derby de la Feria"></label>
+    <div class="fields">
+      <label class="f"><span>Palenque / lugar</span><input type="text" id="ag-lugar" value="${esc(e.lugar||'')}"></label>
+      <label class="f"><span>Ciudad / estado</span><input type="text" id="ag-ciudad" value="${esc(e.ciudad||'')}"></label>
+    </div>
+    <label class="f"><span>Dirección (para el mapa)</span><input type="text" id="ag-dir" value="${esc(e.direccion||'')}" placeholder="Calle, colonia o referencia"></label>
+    <h3 style="font-size:1.1rem;margin-top:4px">Quién te contrata</h3>
+    <div class="fields">
+      <label class="f"><span>Nombre</span><input type="text" id="ag-cliente" value="${esc(e.cliente||'')}"></label>
+      <label class="f"><span>Teléfono / WhatsApp</span><input type="tel" id="ag-tel" value="${esc(e.telefono||'')}"></label>
+      <label class="f"><span>Empresa / palenque</span><input type="text" id="ag-empresa" value="${esc(e.empresa||'')}"></label>
+      <label class="f"><span>Correo (opcional)</span><input type="text" id="ag-correo" value="${esc(e.correo||'')}" inputmode="email"></label>
+    </div>
+    <h3 style="font-size:1.1rem;margin-top:4px">Pago</h3>
+    <div class="fields">
+      <label class="f"><span>Precio acordado</span><input type="number" min="0" step="any" id="ag-precio" value="${esc(e.precio??'')}" inputmode="decimal"></label>
+      <label class="f"><span>Anticipo recibido</span><input type="number" min="0" step="any" id="ag-anticipo" value="${esc(e.anticipo??'')}" inputmode="decimal"></label>
+      <label class="f"><span>Forma de pago</span><select id="ag-forma">${FORMAS.map(f=>`<option ${e.forma===f?'selected':''}>${f}</option>`).join('')}</select></label>
+    </div>
+    <label class="f"><span>Notas (viáticos, hospedaje, número de gallos, lo que se acordó)</span><textarea id="ag-notas" style="min-height:70px;font-family:var(--f-body)">${esc(e.notas||'')}</textarea></label>
+    <p class="err" id="ag-err"></p>
+    <div class="row">${n?'':`<button class="btn danger" data-act="ag-borrar" data-id="${e.id}">${ICON.trash} Borrar</button>`}<span class="sp"></span><button class="btn" data-act="cerrar">Cancelar</button><button class="btn pri" data-act="ag-guardar" data-id="${e.id||''}">Guardar evento</button></div>`);
+}
+async function pdfConfirmacion(e){
+  toast('Preparando PDF…');
+  const a = S.ajustes;
+  const {doc, marco, A, B, W} = await nuevoPDF('portrait', 'Confirmación de evento', fechaLarga(e.fecha));
+  let y = 36;
+  doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor(20,23,28); doc.text(L1(e.nombre || e.tipo || 'Evento'), 10, y);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10.5); doc.setTextColor(90,96,106); doc.text(L1(`${e.tipo||''} · Estado: ${(EST_AG[e.estado]||EST_AG.porconf)[0]}`), 10, y+7);
+  y = seccionPDF(doc, y+14, 'Datos del evento', A, B);
+  y = tablaPDF(doc, {startY:y, theme:'plain', body:[
+    ['Fecha', L1(fechaLarga(e.fecha))], ['Hora', L1(hora12(e.hora)||'Por definir')], ['Lugar', L1([e.lugar, e.ciudad].filter(Boolean).join(', ')||'-')], ['Dirección', L1(e.direccion||'-')]],
+    columnStyles:{0:{fontStyle:'bold', cellWidth:40, textColor:[90,96,106]}}, styles:{fontSize:10.5, cellPadding:2}}, A, B, marco) + 6;
+  y = seccionPDF(doc, y, 'Contratante', A, B);
+  y = tablaPDF(doc, {startY:y, theme:'plain', body:[
+    ['Nombre', L1(e.cliente||'-')], ['Teléfono', L1(e.telefono||'-')], ['Empresa / palenque', L1(e.empresa||'-')], ...(e.correo?[['Correo', L1(e.correo)]]:[])],
+    columnStyles:{0:{fontStyle:'bold', cellWidth:40, textColor:[90,96,106]}}, styles:{fontSize:10.5, cellPadding:2}}, A, B, marco) + 6;
+  y = seccionPDF(doc, y, 'Servicio de cotejo', A, B);
+  y = tablaPDF(doc, {startY:y, theme:'plain', body:[
+    ['Prestador', L1(`${a.propNombre||''}${a.propTel?' · Tel. '+a.propTel:''}`)], ['Servicio', L1(`${a.app} · cotejo, control de peleas, tabla de resultados y reportes`)],
+    ['Precio acordado', L1(money(e.precio))], ['Pagado a la fecha', L1(money(pagadoEv(e)))], ['Saldo', L1(saldoEv(e) ? money(saldoEv(e)) : 'LIQUIDADO')], ['Forma de pago', L1(e.forma||'-')]],
+    columnStyles:{0:{fontStyle:'bold', cellWidth:40, textColor:[90,96,106]}}, styles:{fontSize:10.5, cellPadding:2},
+    didParseCell: c => { if(c.section==='body' && c.row.index===4 && c.column.index===1){ c.cell.styles.fontStyle='bold'; c.cell.styles.textColor = saldoEv(e)?[179,38,30]:[31,122,69]; } }}, A, B, marco) + 6;
+  if(e.notas){ y = seccionPDF(doc, y, 'Acuerdos y notas', A, B); doc.setFont('helvetica','normal'); doc.setFontSize(10.5); doc.setTextColor(40,44,52); const ln = doc.splitTextToSize(L1(e.notas), W-20); doc.text(ln, 10, y+3); y += ln.length*5 + 8; }
+  const H = doc.internal.pageSize.getHeight(); if(y > H-52){ doc.addPage(); marco(); y = 40; } else y -= 8;
+  y += 22; doc.setDrawColor(60,66,76); doc.setLineWidth(0.3); doc.line(18, y, 92, y); doc.line(W-92, y, W-18, y);
+  doc.setFontSize(9); doc.setTextColor(90,96,106);
+  doc.text('Contratante', 55, y+5, {align:'center'}); doc.text(L1(e.cliente||''), 55, y+10, {align:'center'});
+  doc.text('Prestador del servicio', W-55, y+5, {align:'center'}); doc.text(L1(a.propNombre||''), W-55, y+10, {align:'center'});
+  cerrarPDF(doc);
+  await descargar(slug('confirmacion-'+(e.nombre||e.fecha))+'.pdf', doc.output('arraybuffer'));
+}
+async function pdfAgenda(){
+  toast('Preparando PDF…');
+  const evs = agenda().eventos.slice().sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+  const {doc, marco, A, B} = await nuevoPDF('landscape', 'Agenda de eventos', `${evs.length} eventos`);
+  tablaPDF(doc, {startY:32, head:[['Fecha','Hora','Evento','Lugar','Contratante','Teléfono','Estado','Precio','Pagado','Saldo']],
+    body: evs.map(e=>[L1(fFecha(e.fecha)), L1(hora12(e.hora)), L1(e.nombre||e.tipo||''), L1([e.lugar,e.ciudad].filter(Boolean).join(', ')), L1(e.cliente||''), L1(e.telefono||''), L1((EST_AG[e.estado]||EST_AG.porconf)[0]), L1(money(e.precio)), L1(money(pagadoEv(e))), saldoEv(e)?L1(money(saldoEv(e))):'Liquidado']),
+    columnStyles:{7:{halign:'right'}, 8:{halign:'right'}, 9:{halign:'right', fontStyle:'bold'}},
+    didParseCell: c => { if(c.section==='body' && c.column.index===9) c.cell.styles.textColor = saldoEv(evs[c.row.index]) ? [179,38,30] : [31,122,69]; }}, A, B, marco);
+  cerrarPDF(doc);
+  await descargar('agenda-' + hoy() + '.pdf', doc.output('arraybuffer'));
+}
+function avisoAgenda(){
+  const p = proximosEventos()[0]; if(!p) return '';
+  const dd = diasPara(p.fecha); if(dd==null || dd>7) return '';
+  return `<button class="card ag-aviso" data-act="vista" data-v="agenda">${ICON.agenda}<span><b>${dd===0?'Hoy':dd===1?'Mañana':'En '+dd+' días'}: ${esc(p.nombre||p.tipo||'evento')}</b><small>${esc([p.lugar,p.ciudad].filter(Boolean).join(' · '))}${p.hora?' · '+hora12(p.hora):''}${saldoEv(p)?' · te deben '+money(saldoEv(p)):''}</small></span><span class="sp"></span>Ver agenda ›</button>`;
 }
 
 /* ============================== eventos ============================== */
@@ -15412,7 +15624,7 @@ document.addEventListener('click', async e=>{
     case 'del-derby': confirmar('Eliminar derby', `Se borrará <b>${esc(d.nombre)}</b> con sus partidos, cotejo y resultados. No se puede deshacer.`, 'Eliminar', ()=>{ borrarDerby(d.id); toast('Derby eliminado'); }, true); break;
     case 'exp-json': descargar(slug(d.nombre)+'.json', JSON.stringify({tipo:'cotejador-derby', version:1, derby:d}, null, 2)); break;
     case 'app-offline': toast('Preparando la versión sin internet…'); descargar(slug(S.ajustes.app||'se-llama-a-gano')+'-sin-internet.html', await appSinInternet()); break;
-    case 'exp-todo': descargar('respaldo-cotejador-'+hoy()+'.json', JSON.stringify({tipo:'cotejador-todo', version:1, ajustes:S.ajustes, derbis:Object.values(S.derbis)}, null, 2)); break;
+    case 'exp-todo': descargar('respaldo-cotejador-'+hoy()+'.json', JSON.stringify({tipo:'cotejador-todo', version:1, ajustes:S.ajustes, derbis:Object.values(S.derbis), agenda:S.agenda}, null, 2)); break;
     case 'add-partido': { const K = d.gallosPorPartido; const p = {id:uid(), codigo:nuevoCodigo(d), nombre:'', representante:'', ciudad:'', telefono:'', pagado:false, gallos:Array.from({length:K},()=>({id:uid(),anillo:'',peso:'',color:'',nota:'',ronda:''}))};
       d.partidos.push(p); guardarDerby(d); requestAnimationFrame(()=>requestAnimationFrame(()=>{ const el=document.getElementById('p-nom-'+p.id); if(el){ el.focus(); el.scrollIntoView({block:'center'}); } })); break; }
     case 'del-partido': { const p = d.partidos.find(x=>x.id===t.dataset.pid); const en = gallosEnPelea(d);
@@ -15551,6 +15763,30 @@ document.addEventListener('click', async e=>{
       break; }
     case 'tema-toggle': ponerTema(temaEfectivo()==='dark' ? 'light' : 'dark'); toast(temaEfectivo()==='dark' ? 'Fondo oscuro' : 'Fondo blanco'); break;
     case 'tema': ponerTema(t.dataset.t); break;
+    case 'ag-nuevo': S.agDia = S.agFiltro==='dia' ? S.agDia : ''; modalEvento(); break;
+    case 'ag-editar': { const e = agenda().eventos.find(x=>x.id===t.dataset.id); if(e) modalEvento(e); break; }
+    case 'ag-guardar': {
+      const g = id => ($('#'+id).value||'').trim(), er = $('#ag-err');
+      if(!g('ag-fecha')){ er.textContent = 'Pon la fecha del evento.'; break; }
+      if(!g('ag-nombre') && !g('ag-cliente')){ er.textContent = 'Escribe al menos el nombre del evento o de quien te contrata.'; break; }
+      const ag = agenda(); let e = t.dataset.id && ag.eventos.find(x=>x.id===t.dataset.id);
+      if(!e){ e = {id:uid(), creado:Date.now(), pagos:[]}; ag.eventos.push(e); }
+      Object.assign(e, {fecha:g('ag-fecha'), hora:g('ag-hora'), tipo:g('ag-tipo'), estado:$('#ag-estado').value, nombre:g('ag-nombre'), lugar:g('ag-lugar'), ciudad:g('ag-ciudad'), direccion:g('ag-dir'),
+        cliente:g('ag-cliente'), telefono:g('ag-tel'), empresa:g('ag-empresa'), correo:g('ag-correo'), precio:parseFloat(g('ag-precio'))||0, anticipo:parseFloat(g('ag-anticipo'))||0, forma:$('#ag-forma').value, notas:$('#ag-notas').value.trim()});
+      cerrarModal(); S.agMes = e.fecha.slice(0,7); guardarAgenda(); toast('Evento guardado'); break; }
+    case 'ag-borrar': { const id = t.dataset.id; cerrarModal(); confirmar('Borrar evento', 'Se borrará este evento de tu agenda.', 'Borrar', ()=>{ S.agenda.eventos = agenda().eventos.filter(x=>x.id!==id); guardarAgenda(); }, true); break; }
+    case 'ag-filtro': S.agFiltro = t.dataset.f; render(); break;
+    case 'ag-mes': { const [y,m] = (S.agMes || hoy().slice(0,7)).split('-').map(Number); const dt = new Date(y, m-1+(+t.dataset.d), 1); S.agMes = dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0'); S.agFiltro = 'mes'; render(); break; }
+    case 'ag-dia': { const f = t.dataset.f; S.agDia = f; const hay = agenda().eventos.some(e=>e.fecha===f); if(hay){ S.agFiltro = 'dia'; render(); } else { modalEvento(); } break; }
+    case 'ag-pdf': { const e = agenda().eventos.find(x=>x.id===t.dataset.id); if(e) hacerPDF(()=>pdfConfirmacion(e)); break; }
+    case 'ag-pdf-lista': hacerPDF(pdfAgenda); break;
+    case 'ag-abono': { const e = agenda().eventos.find(x=>x.id===t.dataset.id); if(!e) break;
+      modal(`<h3>Registrar pago · ${esc(e.nombre||e.cliente||'')}</h3><p class="small muted" style="margin:0">Te deben ${money(saldoEv(e))}.</p><div class="fields"><label class="f"><span>Monto</span><input type="number" min="0" step="any" id="ab-monto" value="${saldoEv(e)}"></label><label class="f"><span>Forma</span><select id="ab-forma">${FORMAS.map(f=>`<option>${f}</option>`).join('')}</select></label></div><div class="row" style="justify-content:flex-end"><button class="btn" data-act="cerrar">Cancelar</button><button class="btn ok" data-act="ag-abono-ok" data-id="${e.id}">Guardar pago</button></div>`); break; }
+    case 'ag-abono-ok': { const e = agenda().eventos.find(x=>x.id===t.dataset.id); const mo = parseFloat($('#ab-monto').value); if(!(mo>0)) break; (e.pagos ||= []).push({monto:mo, forma:$('#ab-forma').value, fecha:Date.now()}); cerrarModal(); guardarAgenda(); toast(saldoEv(e) ? 'Pago guardado · resta ' + money(saldoEv(e)) : 'Pago guardado · evento liquidado'); break; }
+    case 'ag-derby': { const e = agenda().eventos.find(x=>x.id===t.dataset.id); if(!e) break; const n = DERBY_DEF(); const prev = cur();
+      if(prev){ ['gallosPorPartido','modo','tolerancia','puntos','desempate','casa','premios'].forEach(k=>n[k]=clone(prev[k])); }
+      n.nombre = e.nombre || ('Derby ' + fFecha(e.fecha)); n.fecha = e.fecha; n.lugar = [e.lugar, e.ciudad].filter(Boolean).join(', '); n.notas = e.cliente ? 'Contrata: ' + e.cliente + (e.telefono?' · '+e.telefono:'') : '';
+      e.derby = n.id; S.actual = n.id; guardarDerby(n); guardarAgenda(); S.vista = 'derbis'; guardarLocal(); render(); toast('Derby creado con los datos del evento'); break; }
     case 'hist-sel': S.histSel = t.dataset.k || null; render(); if(S.histSel) window.scrollTo({top:0, behavior:'smooth'}); break;
     case 'hist-pdf': { const hh = historial().find(x=>x.k===S.histSel); if(hh) hacerPDF(()=>pdfHistorial(hh)); break; }
     case 'mi-hist-pdf': { const rp = rolPartido(); const hh = rp && historial().find(x=>x.k===claveNombre(rp.p.nombre)); if(hh) hacerPDF(()=>pdfHistorial(hh)); break; }
@@ -15606,7 +15842,7 @@ document.addEventListener('change', async e=>{
       const j = JSON.parse(await f.text()); let n = 0;
       let igual = 0; const meter = x => { if(!x || !Array.isArray(x.partidos)) return; const y = S.derbis[x.id]; if(y && (y.actualizado||0) >= (x.actualizado||0)){ igual++; return; } x.peleas = x.peleas||[]; x.excepciones=x.excepciones||[]; S.actual = x.id; const t0 = x.actualizado; guardarDerby(x); n++; };
       if(j.tipo==='cotejador-derby') meter(j.derby);
-      else if(j.tipo==='cotejador-todo'){ (j.derbis||[]).forEach(meter); if(j.ajustes){ S.ajustes = {...AJ_DEF, ...j.ajustes}; guardarAjustes(); } }
+      else if(j.tipo==='cotejador-todo'){ (j.derbis||[]).forEach(meter); if(j.agenda && Array.isArray(j.agenda.eventos) && (j.agenda.actualizado||0) > (S.agenda.actualizado||0)){ S.agenda = j.agenda; guardarAgenda(); } if(j.ajustes){ S.ajustes = {...AJ_DEF, ...j.ajustes}; guardarAjustes(); } }
       else throw new Error('formato');
       guardarLocal(); toast(`${n} derby${n===1?'':'s'} restaurado${n===1?'':'s'}${igual?` · ${igual} ya estaba${igual===1?'':'n'} al día`:''}`);
     }catch{ toast('Ese archivo no es un respaldo del cotejador'); } t.value=''; }
